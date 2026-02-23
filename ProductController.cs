@@ -29,7 +29,6 @@ namespace CRUDAPI.Controllers
 
 
                         command.Parameters.AddWithValue("@Name", productDto.Name);
-                        command.Parameters.AddWithValue("@Name", productDto.Name);
                         command.Parameters.AddWithValue("@Brand", productDto.Brand);
                         command.Parameters.AddWithValue("@Category", productDto.Category);
                         command.Parameters.AddWithValue("@Price", productDto.Price);
@@ -46,7 +45,7 @@ namespace CRUDAPI.Controllers
                 ModelState.AddModelError("Product", "Sorry, But we have an Exception");
                 return BadRequest(ModelState); 
             }
-            return Ok();
+            return Created("", productDto);
         }
 
         //Action Method to Read the Data from the DataBase
