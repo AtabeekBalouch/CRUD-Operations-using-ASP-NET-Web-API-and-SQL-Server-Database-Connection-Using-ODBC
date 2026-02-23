@@ -1,0 +1,12 @@
+Create Procedure UpdateProduct
+	@ID Int,
+	@Name Varchar(255),
+	@Brand Varchar(255),
+	@Category Varchar(255),
+	@Price Varchar(255),
+	@Description NVarchar(Max)
+As
+Begin
+	Update Products Set Name=@Name, Brand= @Brand, Category = @Category, Price= @Price, Description = @Description
+	where ID =@ID;
+end
