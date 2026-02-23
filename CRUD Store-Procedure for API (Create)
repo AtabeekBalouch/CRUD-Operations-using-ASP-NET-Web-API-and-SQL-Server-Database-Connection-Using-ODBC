@@ -1,0 +1,11 @@
+Create Procedure InsertProduct
+	@Name Varchar(255),
+	@Brand Varchar(255),
+	@Category Varchar(255),
+	@Price Varchar(255),
+	@Description NVarchar(Max)
+As
+Begin
+	Insert into Products (Name, Brand, Category, Price, Description)
+	values(@Name, @Brand, @category, @Price, @Description)
+end
