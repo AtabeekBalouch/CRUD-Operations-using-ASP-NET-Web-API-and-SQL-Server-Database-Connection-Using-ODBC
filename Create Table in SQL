@@ -1,0 +1,12 @@
+Use Products
+
+Create Table Products
+(
+	ID Int Not Null Primary Key Identity(1,1),
+	Name VARCHAR(100),
+	Brand VARCHAR(100),
+	Category VARCHAR(100),
+	Price Decimal (16,2),
+	Description NVARCHAR(MAX),
+	Create_at DATETIME2 Default Current_TimeStamp
+);
