@@ -1,0 +1,5 @@
+Create Procedure GetAll_Product
+As
+Begin
+	select * from Products 
+end
