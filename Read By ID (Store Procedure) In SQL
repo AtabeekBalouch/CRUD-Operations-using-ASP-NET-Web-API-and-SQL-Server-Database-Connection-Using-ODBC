@@ -1,0 +1,7 @@
+Create Procedure Get_Product_ID
+	@ID Int
+As
+Begin
+	select * from Products 
+	where ID =@ID;
+end
