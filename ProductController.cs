@@ -1,94 +1,208 @@
-using CRUDAPI.Models;
+using CRUDAPI.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Data.SqlClient;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CRUDAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class EmployeeController : ControllerBase
     {
-        private readonly string connectionstring;
-        public ProductController(IConfiguration configuration)
+        private readonly string connectionString;
+        public EmployeeController(IConfiguration configuration)
         {
-            connectionstring = configuration["ConnectionStrings:SqlServerDB"] ?? "";
+            connectionString = configuration["ConnectionStrings: SqlServerDb"] ?? "";
         }
-        //Action Method to get the data from the Client
-        [HttpPost]
-        public IActionResult CreateProduct(ProductDto productDto)
+
+        /*This method handles POST requests. This Action Method Allow us to get a data from a client to store in database
+         * we get data from client
+        */
+        [HttpPost("CreateEmployee")]
+        public IActionResult CreateEmployee(EmployeeDto employeeDto)
         {
             try
             {
-                using (var connection = new SqlConnection(connectionstring))
+                //Object Created represents the connection to your database
+                using (var connection = new SqlConnection(connectionString))
+
+                //Object is created for represents the SQL query or stored procedure
+                using (var command = new SqlCommand("InsertEmployee", connection))
                 {
-                    using (var command = new SqlCommand("InsertProcedure", connection))
-                    {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    connection.Open();
 
+                    command.Parameters.AddWithValue("@Employee_Name", employeeDto.Employee_Name);
+                    command.Parameters.AddWithValue("@Employee_Email", employeeDto.Employee_Email);
+                    command.Parameters.AddWithValue("@Employee_Salary", employeeDto.Employee_Salary);
 
-
-                        command.Parameters.AddWithValue("@Name", productDto.Name);
-                        command.Parameters.AddWithValue("@Brand", productDto.Brand);
-                        command.Parameters.AddWithValue("@Category", productDto.Category);
-                        command.Parameters.AddWithValue("@Price", productDto.Price);
-                        command.Parameters.AddWithValue("@Description", productDto.Description);
-
-                        connection.Open();
-
-                        command.ExecuteNonQuery();
-                    }
+                    command.ExecuteNonQuery();
                 }
             }
-            catch (Exception ex)
+
+            catch (Exception)
             {
-                ModelState.AddModelError("Product", "Sorry, But we have an Exception");
-                return BadRequest(ModelState); 
+                ModelState.AddModelError("Employee", "Sorry, but we have an Exception.");
+                return BadRequest(ModelState);
             }
-            return Created("", productDto);
+
+            return Ok();
         }
 
-        //Action Method to Read the Data from the DataBase
-        [HttpGet]
-        public IActionResult GetProduct()
+        /*This method handles GET requests. This action method allow us to Read the Whole data from the Data base,
+         * so the client can request to read it.
+        */
+        [HttpGet("GetAllEMployee")]
+        public IActionResult GetEmployeeDetail()
         {
-            List<Products> products = new List<Products>();
+            //List is Created to store
+            List<Employee> EMPLOYEE = new List<Employee>();
+
             try
             {
-                using (var connection = new SqlConnection(connectionstring))
+                //Object Created represents the connection to your database
+                using (var connection = new SqlConnection(connectionString))
+
+                //Object is created for represents the SQL query or stored procedure
+                using (var command = new SqlCommand("GetAllEmployee", connection))
                 {
-                    using (var command = new SqlCommand("GetAll_Product",connection))
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    connection.Open();
+
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.CommandType = System.Data.CommandType.StoredProcedure;
-
-                        connection.Open();
-
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                Products Product  = new Products();
+                            //Object is created in Employee foem
+                            Employee employee = new Employee();
 
-                                Product.Id = reader.GetInt32(0);
-                                Product.Name = reader.GetString(1);
-                                Product.Brand = reader.GetString(2);
-                                Product.Category = reader.GetString(3);
-                                Product.Price = reader.GetDecimal(4);
-                                Product.CreatedAt = reader.GetDateTime(5);
+                            employee.Id = reader.GetInt32(0);
+                            employee.Employee_Name = reader.GetString(1);
+                            employee.Employee_Email = reader.GetString(2);
+                            employee.Employee_Salary = reader.GetDecimal(3);
 
-                                products.Add (Product);
-                            }
+                            EMPLOYEE.Add(employee);
                         }
                     }
                 }
             }
-
-            catch (Exception ex)
+            catch (Exception)
             {
-                ModelState.AddModelError("Product", "Sorry, but we have an exception");
+                ModelState.AddModelError("Employee", "Sorry, but we have an Exception.");
                 return BadRequest(ModelState);
             }
-            return Ok(products);
+
+            return Ok(EMPLOYEE);
+
+        }
+        /*This method handles GET requests. This Action method allow us to Read the data by id
+         * So the Client can request to read it by ID*/
+        [HttpGet("{id}")]
+        public IActionResult GetEmployeeByID(int id)
+        {
+            //CLass is created
+            Employee employee = new Employee();
+
+            try
+            {
+                //Object Created represents the connection to your database
+                using (var connection = new SqlConnection(connectionString))
+
+                //Object Created represents the SQL query or stored procedure
+                using (var command = new SqlCommand("GetAllEmployeeByID", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@id", id);
+
+                    connection.Open();
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            employee.Id = reader.GetInt32(0);
+                            employee.Employee_Name = reader.GetString(1);
+                            employee.Employee_Email = reader.GetString(2);
+                            employee.Employee_Salary = reader.GetDecimal(3);
+                        }
+                        else
+                        {
+                            return NotFound();
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("Employee", "Sorry, but we have an Exception.");
+                return BadRequest(ModelState);
+            }
+
+            return Ok(employee);
+        }
+
+        /*
+         * This method handles PUT requests. This method allow us to update the product
+         * Update the data from the Client, Client can update the data from there side.
+        */
+        [HttpPut("{id}")]
+        public IActionResult UpdateEmployee(int id, EmployeeDto employeeDto)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                using (var command = new SqlCommand("UpdateEmployee", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    connection.Open();
+
+                    command.Parameters.AddWithValue("@ID", id);
+                    command.Parameters.AddWithValue("@Employee_Name", employeeDto.Employee_Name);
+                    command.Parameters.AddWithValue("@Employee_Email", employeeDto.Employee_Email);
+                    command.Parameters.AddWithValue("@Employee_Salary", employeeDto.Employee_Salary);
+
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            catch (Exception)
+            {
+                ModelState.AddModelError("Employee", "Sorry, but we have an Exception.");
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        //This method handles DELETE requests
+        //Action Method to Allows us to Delete a product
+        [HttpDelete("{id}")]
+        public IActionResult DeleteEmployee(int id)
+        {
+            try
+            {
+                using (var connection = new SqlConnection(connectionString))
+                using (var command = new SqlCommand("DeleteEMployee",connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    connection.Open();
+
+                    command.Parameters.AddWithValue("id",id);
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            catch (Exception)
+            {
+                ModelState.AddModelError("Employee", "Sorry, but we have an Exception.");
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
         }
     }
 }
