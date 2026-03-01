@@ -1,7 +1,7 @@
-Delete Procedure DeleteProduct
+Delete Procedure DeleteEmployee
 	@ID Int
 As
 Begin
-	delete Products 
+	delete from tbl_Employee 
 	where ID =@ID;
 end
