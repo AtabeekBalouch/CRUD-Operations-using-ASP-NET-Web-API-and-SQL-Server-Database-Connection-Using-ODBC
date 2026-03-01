@@ -1,11 +1,9 @@
-Create Procedure InsertProduct
-	@Name Varchar(255),
-	@Brand Varchar(255),
-	@Category Varchar(255),
-	@Price Varchar(255),
-	@Description NVarchar(Max)
-As
-Begin
-	Insert into Products (Name, Brand, Category, Price, Description)
-	values(@Name, @Brand, @category, @Price, @Description)
+Create Procedure InsertEmployee
+	@Employee_Name VARCHAR(100),
+	@Employee_Email Varchar(100),
+	@Employee_Salary Decimal (18,2)
+as
+begin
+	insert into tbl_Employee(Employee_Name, Employee_Email, Employee_Salary)
+	Values(@Employee_Name, @Employee_Email, @Employee_Salary);
 end
