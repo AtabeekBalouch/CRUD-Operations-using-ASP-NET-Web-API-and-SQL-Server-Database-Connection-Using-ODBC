@@ -1,18 +1,12 @@
-namespace CRUDAPI.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace CRUDAPI.Model
 {
-    public class Products
+    public class Employee
     {
         public int Id { get; set; }
-        public string Name { get; set; } = "";
-
-        public string Brand { get; set; } = "";
-
-        public string Category { get; set; } = "";
-
-        public decimal Price { get; set; }
-
-        public string Description { get; set; } = "";
-
-        public DateTime CreatedAt { get; set; }
+        public string Employee_Name { get; set; } = "";
+        public string Employee_Email { get; set; } = "";
+        public decimal Employee_Salary { get; set; }
     }
 }
