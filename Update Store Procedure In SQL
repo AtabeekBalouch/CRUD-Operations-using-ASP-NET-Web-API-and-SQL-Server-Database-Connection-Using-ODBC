@@ -1,12 +1,10 @@
-Create Procedure UpdateProduct
+Create Procedure UpdateEmployee
 	@ID Int,
-	@Name Varchar(255),
-	@Brand Varchar(255),
-	@Category Varchar(255),
-	@Price Varchar(255),
-	@Description NVarchar(Max)
-As
-Begin
-	Update Products Set Name=@Name, Brand= @Brand, Category = @Category, Price= @Price, Description = @Description
-	where ID =@ID;
+	@Employee_Name VARCHAR(100),
+	@Employee_Email Varchar(100),
+	@Employee_Salary Decimal (18,2)
+as
+begin
+	Update tbl_employee set Employee_Name = @Employee_Name, Employee_Email = @Employee_Email, Employee_Salary = @Employee_Salary
+	where ID = @ID;
 end
