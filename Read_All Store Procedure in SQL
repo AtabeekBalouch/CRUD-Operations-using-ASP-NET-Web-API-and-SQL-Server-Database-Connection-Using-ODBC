@@ -1,5 +1,5 @@
-Create Procedure GetAll_Product
+Create Procedure GetAll_Employee
 As
 Begin
-	select * from Products 
+	select * from tbl_Employee 
 end
