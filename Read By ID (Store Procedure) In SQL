@@ -1,7 +1,7 @@
-Create Procedure Get_Product_ID
+Create Procedure GetAllEmployeeByID
 	@ID Int
 As
 Begin
-	select * from Products 
-	where ID =@ID;
+	select * from tbl_Employee 
+	where ID = @ID;
 end
